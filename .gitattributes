@@ -1,0 +1,5 @@
+# SVG compactado (gzip): tratar como binário para o git não gerar diffs de texto
+*.svgz binary
+
+# Scripts sempre com quebra de linha do Linux
+*.sh text eol=lf
