@@ -2,6 +2,7 @@
 #
 # Instala as personalizações do KDE Plasma deste repositório:
 #   - tema do Plasma "Vidro Azul"
+#   - aparência: esquema de cores, ícones e efeitos do KWin
 #   - perfil e esquema de cores do Konsole "Vidro Azul"
 #   - layout dos painéis (dock inferior + barra superior)
 #
@@ -21,6 +22,7 @@ PERFIL_KONSOLE="VidroAzul.profile"
 
 info()  { printf '\033[1;34m==>\033[0m %s\n' "$*"; }
 ok()    { printf '\033[1;32m  ✓\033[0m %s\n' "$*"; }
+aviso() { printf '\033[1;33m  !\033[0m %s\n' "$*"; }
 erro()  { printf '\033[1;31mErro:\033[0m %s\n' "$*" >&2; }
 
 uso() {
@@ -31,6 +33,7 @@ Sem opções, instala tudo.
 
 Opções:
   --tema      instala e aplica o tema do Plasma Vidro Azul
+  --aparencia aplica esquema de cores, ícones e efeitos do KWin
   --konsole   instala o perfil do Konsole e o define como padrão
   --layout    aplica o layout dos painéis (dock + barra superior)
   --ajuda     mostra esta mensagem
@@ -79,6 +82,55 @@ instalar_tema() {
     ok "tema aplicado"
 }
 
+tema_icones_instalado() {
+    [[ -d "$DATA_DIR/icons/$1" || -d "/usr/share/icons/$1" ]]
+}
+
+# Troca o tema de ícones avisando os apps abertos. O plasma-changeicons fica
+# em pastas internas que variam entre distribuições; sem ele, grava só a
+# configuração, que passa a valer ao reabrir os apps.
+aplicar_icones() {
+    local caminho
+    for caminho in /usr/lib/plasma-changeicons \
+                   /usr/libexec/plasma-changeicons \
+                   /usr/lib/*/libexec/plasma-changeicons; do
+        if [[ -x "$caminho" ]]; then
+            "$caminho" "$1" >/dev/null
+            return
+        fi
+    done
+    kwriteconfig6 --file kdeglobals --group Icons --key Theme "$1"
+}
+
+aplicar_aparencia() {
+    info "Aparência: cores, ícones e efeitos do KWin"
+    # shellcheck source=kde/aparencia.conf
+    source "$REPO_DIR/kde/aparencia.conf"
+
+    fazer_backup "$CONFIG_DIR/kdeglobals"
+    fazer_backup "$CONFIG_DIR/kwinrc"
+
+    plasma-apply-colorscheme "$ESQUEMA_CORES" >/dev/null
+    ok "esquema de cores: $ESQUEMA_CORES"
+
+    if tema_icones_instalado "$TEMA_ICONES"; then
+        aplicar_icones "$TEMA_ICONES"
+        ok "ícones: $TEMA_ICONES"
+    else
+        aviso "tema de ícones '$TEMA_ICONES' não encontrado; instale-o e rode ./install.sh --aparencia"
+    fi
+
+    local efeito
+    for efeito in "${EFEITOS_LIGADOS[@]}"; do
+        kwriteconfig6 --file kwinrc --group Plugins --key "${efeito}Enabled" true
+    done
+    for efeito in "${EFEITOS_DESLIGADOS[@]}"; do
+        kwriteconfig6 --file kwinrc --group Plugins --key "${efeito}Enabled" false
+    done
+    qdbus6 org.kde.KWin /KWin reconfigure
+    ok "efeitos do KWin: ${#EFEITOS_LIGADOS[@]} ligados, ${#EFEITOS_DESLIGADOS[@]} desligados"
+}
+
 instalar_konsole() {
     info "Konsole: perfil Vidro Azul"
     local destino="$DATA_DIR/konsole"
@@ -109,16 +161,17 @@ aplicar_layout() {
 # ---------- Principal ----------
 
 main() {
-    local tema=false konsole=false layout=false
+    local tema=false aparencia=false konsole=false layout=false
 
     if (($# == 0)); then
-        tema=true; konsole=true; layout=true
+        tema=true; aparencia=true; konsole=true; layout=true
     fi
 
     while (($#)); do
         case "$1" in
-            --tema)    tema=true ;;
-            --konsole) konsole=true ;;
+            --tema)      tema=true ;;
+            --aparencia) aparencia=true ;;
+            --konsole)   konsole=true ;;
             --layout)  layout=true ;;
             -h|--ajuda|--help) uso; exit 0 ;;
             *) erro "opção desconhecida: $1"; uso; exit 1 ;;
@@ -128,9 +181,10 @@ main() {
 
     verificar_dependencias
 
-    $tema    && instalar_tema
-    $konsole && instalar_konsole
-    $layout  && aplicar_layout
+    $tema      && instalar_tema
+    $aparencia && aplicar_aparencia
+    $konsole   && instalar_konsole
+    $layout    && aplicar_layout
 
     echo
     if [[ -d "$BACKUP_DIR" ]]; then

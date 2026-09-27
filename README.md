@@ -7,6 +7,7 @@ Personalizações do KDE Plasma 6: tema de painéis em vidro azulado, terminal t
 | Componente | Descrição |
 |---|---|
 | **Tema do Plasma "Vidro Azul"** | Baseado no Breeze Escuro. Painéis translúcidos (opacidade de 40%) em azul-marinho, com o desfoque do KWin aparecendo por trás. Menus e dicas do Plasma seguem as mesmas cores. |
+| **Aparência** | Esquema de cores Breeze Escuro, tema de ícones `char-white` e efeitos do KWin: Deslizar, Lâmpada mágica e Janelas gelatinosas. |
 | **Konsole "Vidro Azul"** | Esquema de cores com fundo azul-marinho, 75% de opacidade e desfoque. Definido como perfil padrão. |
 | **Layout dos painéis** | Dock inferior só com os aplicativos, centralizado, flutuante e com ocultação automática. Barra superior fina com menu de aplicativos, áreas de trabalho, bandeja, relógio e mostrar área de trabalho. |
 
@@ -31,10 +32,11 @@ Ou, sem git: copie a pasta do projeto para a máquina e rode `./install.sh` de d
 Para instalar apenas uma parte:
 
 ```bash
-./install.sh --tema      # só o tema do Plasma
-./install.sh --konsole   # só o perfil do Konsole
-./install.sh --layout    # só o layout dos painéis
-./install.sh --ajuda     # lista as opções
+./install.sh --tema        # só o tema do Plasma
+./install.sh --aparencia   # só cores, ícones e efeitos do KWin
+./install.sh --konsole     # só o perfil do Konsole
+./install.sh --layout      # só o layout dos painéis
+./install.sh --ajuda       # lista as opções
 ```
 
 As opções podem ser combinadas, por exemplo `./install.sh --tema --konsole`.
@@ -96,6 +98,16 @@ Edite as linhas `BackgroundNormal` e `BackgroundAlternate` em `plasma/desktopthe
 
 Configurações do Sistema → Gerenciamento de janelas → Efeitos da área de trabalho → **Borrar**. Ali ficam a intensidade do desfoque e o ruído.
 
+### Cores, ícones e efeitos do KWin
+
+Tudo fica em `kde/aparencia.conf`:
+
+- `ESQUEMA_CORES`: nome de um esquema em `/usr/share/color-schemes`, sem a extensão `.colors`
+- `TEMA_ICONES`: nome de uma pasta em `/usr/share/icons` ou `~/.local/share/icons`
+- `EFEITOS_LIGADOS` / `EFEITOS_DESLIGADOS`: nomes internos dos efeitos do KWin
+
+O tema de ícones precisa estar instalado. Se não estiver, o instalador avisa e segue com o resto. Depois de instalá-lo, rode `./install.sh --aparencia`.
+
 ### Konsole
 
 Em `konsole/VidroAzul.colorscheme`:
@@ -117,6 +129,8 @@ Altura, ocultação e widgets de cada painel ficam em `plasma/layout/dock-e-barr
 ```
 .
 ├── install.sh                          # instalador
+├── kde/
+│   └── aparencia.conf                  # esquema de cores, ícones e efeitos do KWin
 ├── konsole/
 │   ├── VidroAzul.colorscheme           # cores, opacidade e desfoque do terminal
 │   └── VidroAzul.profile               # perfil que usa o esquema acima
