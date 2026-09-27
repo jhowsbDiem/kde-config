@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 #
 # Instala as personalizações do KDE Plasma deste repositório:
+#   - programas das listas em pacotes/ (distribuições baseadas no Arch)
 #   - tema do Plasma "Vidro Azul"
 #   - aparência: esquema de cores, ícones e efeitos do KWin
 #   - perfil e esquema de cores do Konsole "Vidro Azul"
@@ -33,7 +34,8 @@ Uso: ./install.sh [opções]
 Sem opções, instala tudo.
 
 Opções:
-  --tema      instala e aplica o tema do Plasma Vidro Azul
+  --pacotes   instala os programas de pacotes/ (requer pacman e sudo)
+  --tema     instala e aplica o tema do Plasma Vidro Azul
   --aparencia aplica esquema de cores, ícones e efeitos do KWin
   --konsole   instala o perfil do Konsole e o define como padrão
   --layout    aplica o layout dos painéis (dock + barra superior)
@@ -67,6 +69,54 @@ fazer_backup() {
 }
 
 # ---------- Instalação ----------
+
+# Lê uma lista de pacotes ignorando comentários, espaços e linhas vazias.
+ler_lista() {
+    sed 's/#.*//; s/[[:space:]]//g; /^$/d' "$1"
+}
+
+instalar_pacotes() {
+    info "Pacotes"
+    if ! command -v pacman >/dev/null 2>&1; then
+        aviso "pacman não encontrado: instale manualmente os programas listados em pacotes/"
+        return
+    fi
+
+    local -a lista
+
+    mapfile -t lista < <(ler_lista "$REPO_DIR/pacotes/arch.txt")
+    if ((${#lista[@]})); then
+        sudo pacman -S --needed "${lista[@]}"
+        ok "repositórios oficiais: ${lista[*]}"
+    fi
+
+    mapfile -t lista < <(ler_lista "$REPO_DIR/pacotes/cachyos.txt")
+    if ((${#lista[@]})); then
+        if grep -q '^\[cachyos\]' /etc/pacman.conf; then
+            sudo pacman -S --needed "${lista[@]}"
+            ok "repositório do CachyOS: ${lista[*]}"
+        else
+            aviso "repositório do CachyOS não configurado; instale por outra fonte: ${lista[*]}"
+        fi
+    fi
+
+    mapfile -t lista < <(ler_lista "$REPO_DIR/pacotes/aur.txt")
+    if ((${#lista[@]})); then
+        local ajudante=""
+        if command -v paru >/dev/null 2>&1; then
+            ajudante=paru
+        elif command -v yay >/dev/null 2>&1; then
+            ajudante=yay
+        fi
+
+        if [[ -n "$ajudante" ]]; then
+            "$ajudante" -S --needed "${lista[@]}"
+            ok "AUR ($ajudante): ${lista[*]}"
+        else
+            aviso "nenhum ajudante do AUR (paru ou yay) encontrado; instale manualmente: ${lista[*]}"
+        fi
+    fi
+}
 
 instalar_tema() {
     info "Tema do Plasma: $TEMA"
@@ -232,14 +282,15 @@ aplicar_atalhos() {
 # ---------- Principal ----------
 
 main() {
-    local tema=false aparencia=false konsole=false layout=false atalhos=false
+    local pacotes=false tema=false aparencia=false konsole=false layout=false atalhos=false
 
     if (($# == 0)); then
-        tema=true; aparencia=true; konsole=true; layout=true; atalhos=true
+        pacotes=true; tema=true; aparencia=true; konsole=true; layout=true; atalhos=true
     fi
 
     while (($#)); do
         case "$1" in
+            --pacotes)   pacotes=true ;;
             --tema)      tema=true ;;
             --aparencia) aparencia=true ;;
             --konsole)   konsole=true ;;
@@ -253,6 +304,8 @@ main() {
 
     verificar_dependencias
 
+    # Pacotes primeiro: o tema de ícones precisa estar instalado para a aparência
+    $pacotes   && instalar_pacotes
     $tema      && instalar_tema
     $aparencia && aplicar_aparencia
     $konsole   && instalar_konsole

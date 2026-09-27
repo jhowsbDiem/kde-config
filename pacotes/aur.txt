@@ -1,0 +1,5 @@
+# Pacotes do AUR, instalados com paru ou yay.
+# Um por linha; comentários com #.
+
+google-chrome
+visual-studio-code-bin

@@ -1,0 +1,4 @@
+# Pacotes dos repositórios oficiais do Arch Linux (pacman).
+# Um por linha; comentários com #.
+
+flatpak     # suporte a aplicativos Flatpak

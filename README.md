@@ -6,6 +6,7 @@ Personalizações do KDE Plasma 6: tema de painéis em vidro azulado, terminal t
 
 | Componente | Descrição |
 |---|---|
+| **Programas** | Listas em `pacotes/` separadas por origem: repositórios oficiais do Arch, repositório do CachyOS e AUR. Só em distribuições baseadas no Arch. |
 | **Tema do Plasma "Vidro Azul"** | Baseado no Breeze Escuro. Painéis translúcidos (opacidade de 40%) em azul-marinho, com o desfoque do KWin aparecendo por trás. Menus e dicas do Plasma seguem as mesmas cores. |
 | **Aparência** | Esquema de cores Breeze Escuro, tema de ícones `char-white` e efeitos do KWin: Deslizar, Lâmpada mágica e Janelas gelatinosas. |
 | **Atalhos** | Meta abre o KRunner, Alt+F1 abre o menu de aplicativos, Ctrl+Alt+T ou Meta+T abrem o Konsole, Meta+A / Meta+Shift+A alternam atividades. |
@@ -18,12 +19,12 @@ Personalizações do KDE Plasma 6: tema de painéis em vidro azulado, terminal t
 - Efeito **Borrar** do KWin ativado (vem ativado por padrão)
 - Comandos `kwriteconfig6`, `qdbus6` e `plasma-apply-desktoptheme`, que já fazem parte do Plasma
 
-Nenhum pacote extra é necessário.
+Nenhum pacote extra é necessário para as personalizações do KDE. A instalação dos programas (`--pacotes`) requer uma distribuição baseada no Arch (`pacman`) e pede a senha do `sudo`; em outras distribuições essa etapa é pulada com um aviso.
 
 ## Instalação
 
 ```bash
-git clone <url-do-repositório> kde-config
+git clone https://github.com/jhowsbDiem/kde-config.git
 cd kde-config
 ./install.sh
 ```
@@ -33,6 +34,7 @@ Ou, sem git: copie a pasta do projeto para a máquina e rode `./install.sh` de d
 Para instalar apenas uma parte:
 
 ```bash
+./install.sh --pacotes     # só os programas
 ./install.sh --tema        # só o tema do Plasma
 ./install.sh --aparencia   # só cores, ícones e efeitos do KWin
 ./install.sh --konsole     # só o perfil do Konsole
@@ -78,6 +80,18 @@ systemctl --user start plasma-plasmashell
 ```
 
 ## Personalização
+
+### Programas
+
+Um pacote por linha, com comentários opcionais após `#`:
+
+| Arquivo | Origem | Instalado com |
+|---|---|---|
+| `pacotes/arch.txt` | Repositórios oficiais do Arch | `pacman` |
+| `pacotes/cachyos.txt` | Repositório do CachyOS | `pacman`, apenas se `[cachyos]` estiver no `/etc/pacman.conf` |
+| `pacotes/aur.txt` | AUR | `paru` ou `yay`, o que estiver instalado |
+
+Pacotes já instalados são pulados (`--needed`), então a instalação pode ser repetida. Drivers e pacotes do sistema base ficam de fora de propósito: dependem do hardware de cada máquina e são instalados pelo instalador da distribuição.
 
 ### Transparência dos painéis
 
@@ -152,6 +166,10 @@ Altura, ocultação e widgets de cada painel ficam em `plasma/layout/dock-e-barr
 ├── konsole/
 │   ├── VidroAzul.colorscheme           # cores, opacidade e desfoque do terminal
 │   └── VidroAzul.profile               # perfil que usa o esquema acima
+├── pacotes/
+│   ├── arch.txt                        # repositórios oficiais do Arch
+│   ├── cachyos.txt                     # repositório do CachyOS
+│   └── aur.txt                         # AUR
 └── plasma/
     ├── desktoptheme/vidro-azul/        # tema do Plasma
     │   ├── metadata.json               # nome e descrição do tema

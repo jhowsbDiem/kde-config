@@ -1,0 +1,7 @@
+# Pacotes do repositório do CachyOS.
+# Instalados só se o repositório [cachyos] estiver configurado no pacman.
+# Um por linha; comentários com #.
+
+char-white               # tema de ícones usado em kde/aparencia.conf
+paru                     # ajudante do AUR, usado para instalar aur.txt
+shelly-flatpak-backend   # integração do Flatpak com a loja de aplicativos
