@@ -5,6 +5,7 @@
 #   - aparência: esquema de cores, ícones e efeitos do KWin
 #   - perfil e esquema de cores do Konsole "Vidro Azul"
 #   - layout dos painéis (dock inferior + barra superior)
+#   - atalhos globais de teclado
 #
 # Tudo o que for substituído é copiado antes para uma pasta de backup.
 
@@ -36,6 +37,7 @@ Opções:
   --aparencia aplica esquema de cores, ícones e efeitos do KWin
   --konsole   instala o perfil do Konsole e o define como padrão
   --layout    aplica o layout dos painéis (dock + barra superior)
+  --atalhos   aplica os atalhos globais de kde/atalhos.conf
   --ajuda     mostra esta mensagem
 EOF
 }
@@ -44,7 +46,7 @@ EOF
 
 verificar_dependencias() {
     local faltando=()
-    for cmd in kwriteconfig6 qdbus6 plasma-apply-desktoptheme; do
+    for cmd in kwriteconfig6 qdbus6 plasma-apply-desktoptheme busctl; do
         command -v "$cmd" >/dev/null 2>&1 || faltando+=("$cmd")
     done
     if ((${#faltando[@]})); then
@@ -158,13 +160,82 @@ aplicar_layout() {
     ok "layout aplicado"
 }
 
+# Remove espaços do início e do fim.
+aparar() {
+    local s="$1"
+    s="${s#"${s%%[![:space:]]*}"}"
+    s="${s%"${s##*[![:space:]]}"}"
+    printf '%s' "$s"
+}
+
+# Converte um atalho escrito (ex.: "Ctrl+Alt+T") no código numérico do Qt
+# usado pelo serviço de atalhos do KDE: modificadores somados ao código da tecla.
+codigo_tecla() {
+    local -a partes
+    IFS='+' read -ra partes <<< "$1"
+    local tecla="${partes[-1]}" codigo=0 mod
+
+    for mod in "${partes[@]:0:${#partes[@]}-1}"; do
+        case "$mod" in
+            Shift) ((codigo |= 0x02000000)) ;;
+            Ctrl)  ((codigo |= 0x04000000)) ;;
+            Alt)   ((codigo |= 0x08000000)) ;;
+            Meta)  ((codigo |= 0x10000000)) ;;
+            *) return 1 ;;
+        esac
+    done
+
+    case "$tecla" in
+        [A-Za-z0-9])     ((codigo |= $(printf '%d' "'${tecla^^}"))) ;;
+        F[1-9]|F[1-3][0-9]) ((codigo |= 0x01000030 + ${tecla#F} - 1)) ;;
+        Space)  ((codigo |= 0x20)) ;;
+        Meta)   ((codigo |= 0x01000022)) ;;
+        Search) ((codigo |= 0x01000092)) ;;
+        *) return 1 ;;
+    esac
+
+    echo "$codigo"
+}
+
+aplicar_atalhos() {
+    info "Atalhos globais"
+    fazer_backup "$CONFIG_DIR/kglobalshortcutsrc"
+
+    local componente acao atalhos atalho codigo linha
+    while IFS='|' read -r componente acao atalhos; do
+        componente="$(aparar "${componente%%#*}")"
+        [[ -z "$componente" ]] && continue
+        acao="$(aparar "$acao")"
+        atalhos="$(aparar "$atalhos")"
+
+        # Cada atalho vai como uma sequência de 4 teclas: (código, 0, 0, 0)
+        local -a teclas=()
+        if [[ "$atalhos" != "none" ]]; then
+            IFS=',' read -ra lista <<< "$atalhos"
+            for atalho in "${lista[@]}"; do
+                atalho="$(aparar "$atalho")"
+                if ! codigo="$(codigo_tecla "$atalho")"; then
+                    aviso "atalho não reconhecido, linha ignorada: $atalho ($componente / $acao)"
+                    continue 2
+                fi
+                teclas+=(4 "$codigo" 0 0 0)
+            done
+        fi
+
+        busctl --user call org.kde.kglobalaccel /kglobalaccel org.kde.KGlobalAccel \
+            setForeignShortcutKeys 'asa(ai)' 4 "$componente" "$acao" "" "" \
+            $((${#teclas[@]} / 5)) "${teclas[@]}"
+        ok "$componente / $acao: $atalhos"
+    done < "$REPO_DIR/kde/atalhos.conf"
+}
+
 # ---------- Principal ----------
 
 main() {
-    local tema=false aparencia=false konsole=false layout=false
+    local tema=false aparencia=false konsole=false layout=false atalhos=false
 
     if (($# == 0)); then
-        tema=true; aparencia=true; konsole=true; layout=true
+        tema=true; aparencia=true; konsole=true; layout=true; atalhos=true
     fi
 
     while (($#)); do
@@ -172,7 +243,8 @@ main() {
             --tema)      tema=true ;;
             --aparencia) aparencia=true ;;
             --konsole)   konsole=true ;;
-            --layout)  layout=true ;;
+            --layout)    layout=true ;;
+            --atalhos)   atalhos=true ;;
             -h|--ajuda|--help) uso; exit 0 ;;
             *) erro "opção desconhecida: $1"; uso; exit 1 ;;
         esac
@@ -185,6 +257,7 @@ main() {
     $aparencia && aplicar_aparencia
     $konsole   && instalar_konsole
     $layout    && aplicar_layout
+    $atalhos   && aplicar_atalhos
 
     echo
     if [[ -d "$BACKUP_DIR" ]]; then

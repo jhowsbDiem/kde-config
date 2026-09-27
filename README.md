@@ -8,6 +8,7 @@ Personalizações do KDE Plasma 6: tema de painéis em vidro azulado, terminal t
 |---|---|
 | **Tema do Plasma "Vidro Azul"** | Baseado no Breeze Escuro. Painéis translúcidos (opacidade de 40%) em azul-marinho, com o desfoque do KWin aparecendo por trás. Menus e dicas do Plasma seguem as mesmas cores. |
 | **Aparência** | Esquema de cores Breeze Escuro, tema de ícones `char-white` e efeitos do KWin: Deslizar, Lâmpada mágica e Janelas gelatinosas. |
+| **Atalhos** | Meta abre o KRunner, Alt+F1 abre o menu de aplicativos, Ctrl+Alt+T ou Meta+T abrem o Konsole, Meta+A / Meta+Shift+A alternam atividades. |
 | **Konsole "Vidro Azul"** | Esquema de cores com fundo azul-marinho, 75% de opacidade e desfoque. Definido como perfil padrão. |
 | **Layout dos painéis** | Dock inferior só com os aplicativos, centralizado, flutuante e com ocultação automática. Barra superior fina com menu de aplicativos, áreas de trabalho, bandeja, relógio e mostrar área de trabalho. |
 
@@ -36,6 +37,7 @@ Para instalar apenas uma parte:
 ./install.sh --aparencia   # só cores, ícones e efeitos do KWin
 ./install.sh --konsole     # só o perfil do Konsole
 ./install.sh --layout      # só o layout dos painéis
+./install.sh --atalhos     # só os atalhos globais
 ./install.sh --ajuda       # lista as opções
 ```
 
@@ -108,6 +110,21 @@ Tudo fica em `kde/aparencia.conf`:
 
 O tema de ícones precisa estar instalado. Se não estiver, o instalador avisa e segue com o resto. Depois de instalá-lo, rode `./install.sh --aparencia`.
 
+### Atalhos
+
+Ficam em `kde/atalhos.conf`, uma linha por ação:
+
+```
+componente | ação | atalhos
+```
+
+- Vários atalhos são separados por vírgula, e `none` remove todos os atalhos da ação.
+- Modificadores: `Meta`, `Ctrl`, `Alt`, `Shift`. Teclas: letras, números, `F1`–`F35`, `Space`, `Meta`, `Search`.
+- Os nomes de componente e ação estão em `~/.config/kglobalshortcutsrc`.
+- **A ordem importa:** um atalho só pode pertencer a uma ação por vez, então libere-o na linha anterior antes de usá-lo em outra ação.
+
+Os atalhos são aplicados pelo D-Bus no serviço `kglobalaccel`, e não editando o arquivo diretamente, porque o serviço mantém os atalhos em memória e sobrescreveria as mudanças.
+
 ### Konsole
 
 Em `konsole/VidroAzul.colorscheme`:
@@ -130,7 +147,8 @@ Altura, ocultação e widgets de cada painel ficam em `plasma/layout/dock-e-barr
 .
 ├── install.sh                          # instalador
 ├── kde/
-│   └── aparencia.conf                  # esquema de cores, ícones e efeitos do KWin
+│   ├── aparencia.conf                  # esquema de cores, ícones e efeitos do KWin
+│   └── atalhos.conf                    # atalhos globais de teclado
 ├── konsole/
 │   ├── VidroAzul.colorscheme           # cores, opacidade e desfoque do terminal
 │   └── VidroAzul.profile               # perfil que usa o esquema acima
