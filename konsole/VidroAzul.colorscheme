@@ -1,0 +1,109 @@
+# Esquema de cores do Konsole: Breeze com fundo azul-marinho de vidro.
+# Cores no formato vermelho,verde,azul (0 a 255).
+
+[General]
+Description=Vidro Azul
+# 1.0 = opaco, 0.0 = invisível
+Opacity=0.75
+# Desfoque atrás da janela (efeito vidro)
+Blur=true
+ColorRandomization=false
+Wallpaper=
+
+[Background]
+Color=18,30,50
+
+[BackgroundFaint]
+Color=24,40,66
+
+[BackgroundIntense]
+Color=10,18,32
+
+[Foreground]
+Color=252,252,252
+
+[ForegroundFaint]
+Color=239,240,241
+
+[ForegroundIntense]
+Color=61,174,233
+
+# Preto
+[Color0]
+Color=35,38,39
+
+[Color0Faint]
+Color=49,54,59
+
+[Color0Intense]
+Color=127,140,141
+
+# Vermelho
+[Color1]
+Color=237,21,21
+
+[Color1Faint]
+Color=120,50,40
+
+[Color1Intense]
+Color=192,57,43
+
+# Verde
+[Color2]
+Color=17,209,22
+
+[Color2Faint]
+Color=23,162,98
+
+[Color2Intense]
+Color=28,220,154
+
+# Amarelo
+[Color3]
+Color=246,116,0
+
+[Color3Faint]
+Color=182,86,25
+
+[Color3Intense]
+Color=253,188,75
+
+# Azul
+[Color4]
+Color=29,153,243
+
+[Color4Faint]
+Color=27,102,143
+
+[Color4Intense]
+Color=61,174,233
+
+# Magenta
+[Color5]
+Color=155,89,182
+
+[Color5Faint]
+Color=97,74,115
+
+[Color5Intense]
+Color=142,68,173
+
+# Ciano
+[Color6]
+Color=26,188,156
+
+[Color6Faint]
+Color=24,108,96
+
+[Color6Intense]
+Color=22,160,133
+
+# Branco
+[Color7]
+Color=252,252,252
+
+[Color7Faint]
+Color=99,104,109
+
+[Color7Intense]
+Color=255,255,255
