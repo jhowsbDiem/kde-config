@@ -1,0 +1,15 @@
+{
+    "KPlugin": {
+        "Id": "vidro-azul",
+        "Name": "Vidro Azul",
+        "Description": "Breeze escuro com painéis de vidro azulado, levemente borrado",
+        "Authors": [
+            {
+                "Name": "jhow"
+            }
+        ],
+        "License": "LGPL-2.0-or-later",
+        "Version": "1.0"
+    },
+    "X-Plasma-API-Minimum-Version": "6.0"
+}

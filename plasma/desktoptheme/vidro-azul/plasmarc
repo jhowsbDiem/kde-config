@@ -1,0 +1,5 @@
+# Efeitos que o tema pede ao KWin.
+# O desfoque (blur) é aplicado automaticamente nos painéis translúcidos.
+# O contraste deixaria o azul saturado demais, então fica desligado.
+[ContrastEffect]
+enabled=false
