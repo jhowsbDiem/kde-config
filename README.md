@@ -1,6 +1,6 @@
-# cachyos-kde-config
+# kde-config
 
-Personalizações visuais do KDE Plasma 6 para o CachyOS: tema de painéis em vidro azulado, terminal translúcido e layout com dock e barra superior. Um único script instala tudo em uma nova máquina.
+Personalizações do KDE Plasma 6: tema de painéis em vidro azulado, terminal translúcido e layout com dock e barra superior. Um único script instala tudo em uma nova máquina, independente da distribuição.
 
 ## O que está incluído
 
@@ -21,8 +21,8 @@ Nenhum pacote extra é necessário.
 ## Instalação
 
 ```bash
-git clone <url-do-repositório> cachyos-kde-config
-cd cachyos-kde-config
+git clone <url-do-repositório> kde-config
+cd kde-config
 ./install.sh
 ```
 
@@ -46,7 +46,7 @@ Depois da instalação, feche e abra o Konsole para ele carregar o novo perfil.
 Antes de substituir qualquer arquivo, o instalador faz uma cópia em:
 
 ```
-~/.local/state/cachyos-kde-config/backup-AAAAMMDD-HHMMSS/
+~/.local/state/kde-config/backup-AAAAMMDD-HHMMSS/
 ```
 
 A pasta de backup mantém os caminhos relativos ao `$HOME`. Para desfazer:
@@ -66,7 +66,7 @@ kwriteconfig6 --file konsolerc --group "Desktop Entry" --key DefaultProfile --de
 **Layout dos painéis:** o Plasma mantém a configuração em memória, então é preciso pará-lo antes de restaurar os arquivos:
 
 ```bash
-BACKUP=~/.local/state/cachyos-kde-config/backup-AAAAMMDD-HHMMSS   # ajuste a data
+BACKUP=~/.local/state/kde-config/backup-AAAAMMDD-HHMMSS   # ajuste a data
 systemctl --user stop plasma-plasmashell
 cp "$BACKUP/.config/plasma-org.kde.plasma.desktop-appletsrc" ~/.config/
 cp "$BACKUP/.config/plasmashellrc" ~/.config/

@@ -12,7 +12,7 @@ set -euo pipefail
 REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 DATA_DIR="${XDG_DATA_HOME:-$HOME/.local/share}"
 CONFIG_DIR="${XDG_CONFIG_HOME:-$HOME/.config}"
-BACKUP_DIR="${XDG_STATE_HOME:-$HOME/.local/state}/cachyos-kde-config/backup-$(date +%Y%m%d-%H%M%S)"
+BACKUP_DIR="${XDG_STATE_HOME:-$HOME/.local/state}/kde-config/backup-$(date +%Y%m%d-%H%M%S)"
 
 TEMA="vidro-azul"
 PERFIL_KONSOLE="VidroAzul.profile"
