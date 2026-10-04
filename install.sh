@@ -58,6 +58,19 @@ verificar_dependencias() {
     fi
 }
 
+# Fora de um terminal (ex.: duplo clique no Dolphin) o sudo não tem onde pedir
+# a senha, e cada falha conta para o bloqueio temporário do pam_faillock.
+# Nesse caso, reabre o script em uma janela do Konsole.
+exigir_terminal() {
+    [[ -t 0 ]] && return 0
+    if command -v konsole >/dev/null 2>&1; then
+        exec konsole --hold -e "$REPO_DIR/install.sh" "$@"
+    fi
+    erro "a instalação de pacotes pede a senha do sudo e precisa de um terminal."
+    erro "abra um terminal nesta pasta e rode ./install.sh"
+    exit 1
+}
+
 # Copia um arquivo ou pasta para o backup, mantendo o caminho relativo ao $HOME.
 fazer_backup() {
     local alvo="$1"
@@ -283,6 +296,7 @@ aplicar_atalhos() {
 
 main() {
     local pacotes=false tema=false aparencia=false konsole=false layout=false atalhos=false
+    local -a argumentos=("$@")
 
     if (($# == 0)); then
         pacotes=true; tema=true; aparencia=true; konsole=true; layout=true; atalhos=true
@@ -303,6 +317,7 @@ main() {
     done
 
     verificar_dependencias
+    $pacotes && exigir_terminal "${argumentos[@]}"
 
     # Pacotes primeiro: o tema de ícones precisa estar instalado para a aparência
     $pacotes   && instalar_pacotes
