@@ -192,8 +192,22 @@ aplicar_aparencia() {
     for efeito in "${EFEITOS_DESLIGADOS[@]}"; do
         kwriteconfig6 --file kwinrc --group Plugins --key "${efeito}Enabled" false
     done
+    # O reconfigure só relê o kwinrc, que vale a partir do próximo login. Na
+    # sessão atual os efeitos são trocados pelo D-Bus, desligando antes de
+    # ligar para o substituto não conviver com o efeito que ele substitui.
     qdbus6 org.kde.KWin /KWin reconfigure
-    ok "efeitos do KWin: ${#EFEITOS_LIGADOS[@]} ligados, ${#EFEITOS_DESLIGADOS[@]} desligados"
+    for efeito in "${EFEITOS_DESLIGADOS[@]}"; do
+        qdbus6 org.kde.KWin /Effects unloadEffect "$efeito" >/dev/null
+    done
+    local -a falharam=()
+    for efeito in "${EFEITOS_LIGADOS[@]}"; do
+        qdbus6 org.kde.KWin /Effects loadEffect "$efeito" >/dev/null
+        [[ "$(qdbus6 org.kde.KWin /Effects isEffectLoaded "$efeito")" == true ]] || falharam+=("$efeito")
+    done
+    if ((${#falharam[@]})); then
+        aviso "efeitos que o KWin não carregou: ${falharam[*]}"
+    fi
+    ok "efeitos do KWin: $((${#EFEITOS_LIGADOS[@]} - ${#falharam[@]})) ligados, ${#EFEITOS_DESLIGADOS[@]} desligados"
 }
 
 instalar_konsole() {
