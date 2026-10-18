@@ -74,4 +74,12 @@ barra.height = 28;
 barra.hiding = "none";           // sempre visível
 barra.opacity = "translucent";
 
+// Áreas de trabalho: escreve o nome de cada área (I, II, III...) em vez de desenhar as janelas
+barra.widgets("org.kde.plasma.pager").forEach(function (w) {
+    w.currentConfigGroup = ["General"];
+    w.writeConfig("displayedText", 1);           // 0 = número, 1 = nome, 2 = nada
+    w.writeConfig("showWindowOutlines", false);  // sem os contornos das janelas
+    w.reloadConfig();
+});
+
 print("Dock: painel " + dock.id + " | Barra superior: painel " + barra.id + "\n");

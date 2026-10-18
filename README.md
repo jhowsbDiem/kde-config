@@ -11,7 +11,7 @@ Personalizações do KDE Plasma 6: tema de painéis em vidro azulado, terminal t
 | **Aparência** | Esquema de cores Breeze Escuro, tema de ícones `char-white` e efeitos do KWin: Deslizar, Lâmpada mágica e Janelas gelatinosas. |
 | **Atalhos** | Meta abre o KRunner, Alt+F1 abre o menu de aplicativos, Ctrl+Alt+T ou Meta+T abrem o Konsole, Meta+A / Meta+Shift+A alternam atividades. |
 | **Konsole "Vidro Azul"** | Esquema de cores com fundo azul-marinho, 75% de opacidade e desfoque. Definido como perfil padrão. |
-| **Layout dos painéis** | Dock inferior só com os aplicativos, centralizado, flutuante e com ocultação automática. Barra superior fina com menu de aplicativos, áreas de trabalho, bandeja, relógio e mostrar área de trabalho. |
+| **Layout dos painéis** | Dock inferior só com os aplicativos, centralizado, flutuante e com ocultação automática. Barra superior fina com menu de aplicativos, áreas de trabalho (pelo nome, sem os contornos das janelas), bandeja, relógio e mostrar área de trabalho. |
 
 ## Requisitos
 
