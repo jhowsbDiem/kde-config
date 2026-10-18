@@ -72,10 +72,13 @@ exigir_terminal() {
 }
 
 # Copia um arquivo ou pasta para o backup, mantendo o caminho relativo ao $HOME.
+# Se o mesmo alvo já foi copiado nesta execução, mantém a primeira cópia, que
+# é a que guarda o estado anterior à instalação.
 fazer_backup() {
     local alvo="$1"
     [[ -e "$alvo" ]] || return 0
     local destino="$BACKUP_DIR/${alvo#"$HOME"/}"
+    [[ -e "$destino" ]] && return 0
     mkdir -p "$(dirname "$destino")"
     cp -a "$alvo" "$destino"
     ok "backup: $alvo"
