@@ -9,6 +9,7 @@ Personalizações do KDE Plasma 6: tema de painéis em vidro azulado, terminal t
 | **Programas** | Listas em `pacotes/` separadas por origem: repositórios oficiais do Arch, repositório do CachyOS e AUR. Só em distribuições baseadas no Arch. |
 | **Tema do Plasma "Vidro Azul"** | Baseado no Breeze Escuro. Painéis translúcidos (opacidade de 40%) em azul-marinho, com o desfoque do KWin aparecendo por trás. Menus e dicas do Plasma seguem as mesmas cores. |
 | **Aparência** | Esquema de cores Breeze Escuro, tema de ícones `char-white` e efeitos do KWin: Deslizar, Lâmpada mágica e Janelas gelatinosas. |
+| **Áreas de trabalho** | Nomeadas em numerais romanos (I, II, III...) por um script do KWin, que renomeia sozinho ao adicionar, remover ou reordenar áreas. |
 | **Atalhos** | Meta abre o KRunner, Alt+F1 abre o menu de aplicativos, Ctrl+Alt+T ou Meta+T abrem o Konsole, Meta+A / Meta+Shift+A alternam atividades. |
 | **Konsole "Vidro Azul"** | Esquema de cores com fundo azul-marinho, 75% de opacidade e desfoque. Definido como perfil padrão. |
 | **Layout dos painéis** | Dock inferior só com os aplicativos, centralizado, flutuante e com ocultação automática. Barra superior fina com menu de aplicativos, áreas de trabalho (pelo nome, sem os contornos das janelas), bandeja, relógio e mostrar área de trabalho. |
@@ -39,6 +40,7 @@ Para instalar apenas uma parte:
 ./install.sh --aparencia   # só cores, ícones e efeitos do KWin
 ./install.sh --konsole     # só o perfil do Konsole
 ./install.sh --layout      # só o layout dos painéis
+./install.sh --areas       # só os nomes das áreas de trabalho
 ./install.sh --atalhos     # só os atalhos globais
 ./install.sh --ajuda       # lista as opções
 ```
@@ -67,6 +69,13 @@ plasma-apply-desktoptheme breeze-dark
 
 ```bash
 kwriteconfig6 --file konsolerc --group "Desktop Entry" --key DefaultProfile --delete
+```
+
+**Áreas de trabalho** (desativa o script; os nomes atuais ficam até você trocá-los):
+
+```bash
+kwriteconfig6 --file kwinrc --group Plugins --key numerais-romanosEnabled false
+qdbus6 org.kde.KWin /Scripting unloadScript numerais-romanos
 ```
 
 **Layout dos painéis:** o Plasma mantém a configuração em memória, então é preciso pará-lo antes de restaurar os arquivos:
@@ -124,6 +133,14 @@ Tudo fica em `kde/aparencia.conf`:
 
 O tema de ícones precisa estar instalado. Se não estiver, o instalador avisa e segue com o resto. Depois de instalá-lo, rode `./install.sh --aparencia`.
 
+### Áreas de trabalho
+
+O script `kwin/scripts/numerais-romanos/contents/code/main.js` roda dentro do KWin e, sempre que as áreas de trabalho mudam, dá a cada uma o numeral romano da sua posição. Ele só renomeia áreas com o nome padrão do KDE ("Área de trabalho 4") ou que já sejam um numeral romano: uma área com nome próprio, como "Estudos", é mantida.
+
+A quantidade de áreas fica em Configurações do Sistema → Gerenciamento de janelas → Áreas de trabalho virtuais. O script também aparece em Configurações do Sistema → Gerenciamento de janelas → Scripts do KWin, onde pode ser desligado.
+
+Depois de editar o script, rode `./install.sh --areas` para o KWin carregar a nova versão.
+
 ### Atalhos
 
 Ficam em `kde/atalhos.conf`, uma linha por ação:
@@ -166,6 +183,9 @@ Altura, ocultação e widgets de cada painel ficam em `plasma/layout/dock-e-barr
 ├── konsole/
 │   ├── VidroAzul.colorscheme           # cores, opacidade e desfoque do terminal
 │   └── VidroAzul.profile               # perfil que usa o esquema acima
+├── kwin/scripts/numerais-romanos/      # script do KWin
+│   ├── metadata.json                   # nome e descrição do script
+│   └── contents/code/main.js           # nomeia as áreas de trabalho (I, II, III...)
 ├── pacotes/
 │   ├── arch.txt                        # repositórios oficiais do Arch
 │   ├── cachyos.txt                     # repositório do CachyOS

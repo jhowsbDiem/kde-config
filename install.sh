@@ -6,6 +6,7 @@
 #   - aparência: esquema de cores, ícones e efeitos do KWin
 #   - perfil e esquema de cores do Konsole "Vidro Azul"
 #   - layout dos painéis (dock inferior + barra superior)
+#   - nomes das áreas de trabalho em numerais romanos (script do KWin)
 #   - atalhos globais de teclado
 #
 # Tudo o que for substituído é copiado antes para uma pasta de backup.
@@ -19,6 +20,7 @@ BACKUP_DIR="${XDG_STATE_HOME:-$HOME/.local/state}/kde-config/backup-$(date +%Y%m
 
 TEMA="vidro-azul"
 PERFIL_KONSOLE="VidroAzul.profile"
+SCRIPT_KWIN="numerais-romanos"
 
 # ---------- Saída ----------
 
@@ -39,6 +41,7 @@ Opções:
   --aparencia aplica esquema de cores, ícones e efeitos do KWin
   --konsole   instala o perfil do Konsole e o define como padrão
   --layout    aplica o layout dos painéis (dock + barra superior)
+  --areas     nomeia as áreas de trabalho em numerais romanos (I, II, III...)
   --atalhos   aplica os atalhos globais de kde/atalhos.conf
   --ajuda     mostra esta mensagem
 EOF
@@ -240,6 +243,30 @@ aplicar_layout() {
     ok "layout aplicado"
 }
 
+instalar_areas() {
+    info "Áreas de trabalho: numerais romanos"
+    local destino="$DATA_DIR/kwin/scripts/$SCRIPT_KWIN"
+
+    fazer_backup "$destino"
+    rm -rf "$destino"
+    mkdir -p "$(dirname "$destino")"
+    cp -r "$REPO_DIR/kwin/scripts/$SCRIPT_KWIN" "$destino"
+    ok "copiado para $destino"
+
+    fazer_backup "$CONFIG_DIR/kwinrc"
+    kwriteconfig6 --file kwinrc --group Plugins --key "${SCRIPT_KWIN}Enabled" true
+
+    # Descarrega antes de carregar para uma versão nova do script substituir a
+    # que já estiver rodando; o start carrega os scripts ativados no kwinrc.
+    qdbus6 org.kde.KWin /Scripting unloadScript "$SCRIPT_KWIN" >/dev/null
+    qdbus6 org.kde.KWin /Scripting start
+    if [[ "$(qdbus6 org.kde.KWin /Scripting isScriptLoaded "$SCRIPT_KWIN")" == true ]]; then
+        ok "script do KWin ativado"
+    else
+        aviso "o KWin não carregou o script; veja em Configurações do Sistema → Scripts do KWin"
+    fi
+}
+
 # Remove espaços do início e do fim.
 aparar() {
     local s="$1"
@@ -312,11 +339,11 @@ aplicar_atalhos() {
 # ---------- Principal ----------
 
 main() {
-    local pacotes=false tema=false aparencia=false konsole=false layout=false atalhos=false
+    local pacotes=false tema=false aparencia=false konsole=false layout=false areas=false atalhos=false
     local -a argumentos=("$@")
 
     if (($# == 0)); then
-        pacotes=true; tema=true; aparencia=true; konsole=true; layout=true; atalhos=true
+        pacotes=true; tema=true; aparencia=true; konsole=true; layout=true; areas=true; atalhos=true
     fi
 
     while (($#)); do
@@ -326,6 +353,7 @@ main() {
             --aparencia) aparencia=true ;;
             --konsole)   konsole=true ;;
             --layout)    layout=true ;;
+            --areas)     areas=true ;;
             --atalhos)   atalhos=true ;;
             -h|--ajuda|--help) uso; exit 0 ;;
             *) erro "opção desconhecida: $1"; uso; exit 1 ;;
@@ -342,6 +370,7 @@ main() {
     $aparencia && aplicar_aparencia
     $konsole   && instalar_konsole
     $layout    && aplicar_layout
+    $areas     && instalar_areas
     $atalhos   && aplicar_atalhos
 
     echo
