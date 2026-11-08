@@ -1,4 +1,7 @@
 # Esquema de cores do Konsole: Breeze com fundo azul-marinho de vidro.
+# Em relação ao Breeze, o texto fraco (dim) foi escurecido para se distinguir
+# do texto normal, e vermelho, magenta, ciano e algumas versões intensas e
+# fracas foram clareados para manter o contraste sobre o azul-marinho.
 # Cores no formato vermelho,verde,azul (0 a 255).
 
 [General]
@@ -23,7 +26,7 @@ Color=10,18,32
 Color=252,252,252
 
 [ForegroundFaint]
-Color=239,240,241
+Color=158,163,171
 
 [ForegroundIntense]
 Color=61,174,233
@@ -40,13 +43,13 @@ Color=127,140,141
 
 # Vermelho
 [Color1]
-Color=237,21,21
+Color=241,73,73
 
 [Color1Faint]
-Color=120,50,40
+Color=192,64,68
 
 [Color1Intense]
-Color=192,57,43
+Color=246,137,137
 
 # Verde
 [Color2]
@@ -73,37 +76,37 @@ Color=253,188,75
 Color=29,153,243
 
 [Color4Faint]
-Color=27,102,143
+Color=25,114,181
 
 [Color4Intense]
 Color=61,174,233
 
 # Magenta
 [Color5]
-Color=155,89,182
+Color=170,114,193
 
 [Color5Faint]
-Color=97,74,115
+Color=132,93,157
 
 [Color5Intense]
-Color=142,68,173
+Color=195,155,211
 
 # Ciano
 [Color6]
 Color=26,188,156
 
 [Color6Faint]
-Color=24,108,96
+Color=23,122,111
 
 [Color6Intense]
-Color=22,160,133
+Color=31,224,186
 
 # Branco
 [Color7]
 Color=252,252,252
 
 [Color7Faint]
-Color=99,104,109
+Color=102,110,123
 
 [Color7Intense]
 Color=255,255,255
