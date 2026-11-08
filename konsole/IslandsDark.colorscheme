@@ -1,0 +1,117 @@
+# Esquema de cores do Konsole imitando o tema padrão do CLion/IntelliJ (Islands Dark).
+# Fundo e texto vêm do Islands Dark; as 16 cores ANSI vêm do Darcula, de onde o
+# Islands Dark as herda. Fonte: JetBrains/intellij-community (platform-resources).
+# As versões "fracas" (texto dim) não existem na JetBrains: são o tom normal
+# misturado com o fundo, para continuarem legíveis.
+# Cores no formato vermelho,verde,azul (0 a 255).
+
+[General]
+Description=Islands Dark (JetBrains)
+# 1.0 = opaco, 0.0 = invisível
+Opacity=0.75
+# Desfoque atrás da janela (efeito vidro)
+Blur=true
+ColorRandomization=false
+Wallpaper=
+
+# CONSOLE_BACKGROUND_KEY
+[Background]
+Color=25,26,28
+
+[BackgroundFaint]
+Color=25,26,28
+
+# CARET_ROW_COLOR (linha do cursor no editor)
+[BackgroundIntense]
+Color=31,32,36
+
+# CONSOLE_NORMAL_OUTPUT
+[Foreground]
+Color=188,190,196
+
+[ForegroundFaint]
+Color=144,146,151
+
+# Negrito: CARET_COLOR, um tom acima do texto
+[ForegroundIntense]
+Color=206,208,214
+
+# Preto  (intensa = cinza dos comentários do editor; o 595959 original some no fundo)
+[Color0]
+Color=0,0,0
+
+[Color0Faint]
+Color=0,0,0
+
+[Color0Intense]
+Color=122,126,133
+
+# Vermelho
+[Color1]
+Color=240,82,79
+
+[Color1Faint]
+Color=182,67,65
+
+[Color1Intense]
+Color=255,64,80
+
+# Verde
+[Color2]
+Color=92,150,44
+
+[Color2Faint]
+Color=74,117,40
+
+[Color2Intense]
+Color=79,196,20
+
+# Amarelo
+[Color3]
+Color=166,138,13
+
+[Color3Faint]
+Color=125,106,17
+
+[Color3Intense]
+Color=229,191,0
+
+# Azul
+[Color4]
+Color=57,147,212
+
+[Color4Faint]
+Color=47,111,157
+
+[Color4Intense]
+Color=31,176,255
+
+# Magenta
+[Color5]
+Color=167,113,191
+
+[Color5Faint]
+Color=132,91,150
+
+[Color5Intense]
+Color=237,126,237
+
+# Ciano
+[Color6]
+Color=0,163,163
+
+[Color6Faint]
+Color=8,118,118
+
+[Color6Intense]
+Color=0,229,229
+
+# Branco
+[Color7]
+Color=128,128,128
+
+[Color7Faint]
+Color=105,106,106
+
+[Color7Intense]
+Color=255,255,255

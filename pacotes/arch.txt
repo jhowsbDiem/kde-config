@@ -1,4 +1,5 @@
 # Pacotes dos repositórios oficiais do Arch Linux (pacman).
 # Um por linha; comentários com #.
 
-flatpak     # suporte a aplicativos Flatpak
+flatpak                   # suporte a aplicativos Flatpak
+ttf-jetbrains-mono-nerd   # fonte do perfil do Konsole (konsole/Principal.profile)

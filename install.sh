@@ -4,7 +4,7 @@
 #   - programas das listas em pacotes/ (distribuições baseadas no Arch)
 #   - tema do Plasma "Vidro Azul"
 #   - aparência: esquema de cores, ícones e efeitos do KWin
-#   - perfil e esquema de cores do Konsole "Vidro Azul"
+#   - perfil do Konsole com a fonte JetBrains Mono e as cores do CLion/IntelliJ
 #   - layout dos painéis (dock inferior + barra superior)
 #   - nomes das áreas de trabalho em numerais romanos (script do KWin)
 #   - atalhos globais de teclado
@@ -19,7 +19,8 @@ CONFIG_DIR="${XDG_CONFIG_HOME:-$HOME/.config}"
 BACKUP_DIR="${XDG_STATE_HOME:-$HOME/.local/state}/kde-config/backup-$(date +%Y%m%d-%H%M%S)"
 
 TEMA="vidro-azul"
-PERFIL_KONSOLE="VidroAzul.profile"
+PERFIL_KONSOLE="Principal.profile"
+FONTE_KONSOLE="JetBrainsMono Nerd Font Mono"
 SCRIPT_KWIN="numerais-romanos"
 
 # ---------- Saída ----------
@@ -217,19 +218,24 @@ aplicar_aparencia() {
 }
 
 instalar_konsole() {
-    info "Konsole: perfil Vidro Azul"
+    info "Konsole: perfil Principal"
     local destino="$DATA_DIR/konsole"
 
     mkdir -p "$destino"
-    for arquivo in VidroAzul.colorscheme VidroAzul.profile; do
+    for arquivo in IslandsDark.colorscheme VidroAzul.colorscheme "$PERFIL_KONSOLE"; do
         fazer_backup "$destino/$arquivo"
         cp "$REPO_DIR/konsole/$arquivo" "$destino/"
     done
     ok "copiado para $destino"
 
+    # Sem a fonte, o Konsole cai na fonte monoespaçada padrão e os ícones somem
+    if ! fc-list -q "$FONTE_KONSOLE"; then
+        aviso "fonte \"$FONTE_KONSOLE\" não encontrada; instale ttf-jetbrains-mono-nerd (está em pacotes/arch.txt)"
+    fi
+
     fazer_backup "$CONFIG_DIR/konsolerc"
     kwriteconfig6 --file konsolerc --group "Desktop Entry" --key DefaultProfile "$PERFIL_KONSOLE"
-    ok "definido como perfil padrão (reabra o Konsole para ver)"
+    ok "definido como perfil padrão (abra uma janela nova do Konsole para ver)"
 }
 
 aplicar_layout() {

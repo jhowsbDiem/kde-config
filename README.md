@@ -11,7 +11,7 @@ Personalizações do KDE Plasma 6: tema de painéis em vidro azulado, terminal t
 | **Aparência** | Esquema de cores Breeze Escuro, tema de ícones `char-white` e efeitos do KWin: Deslizar, Lâmpada mágica e Janelas gelatinosas. |
 | **Áreas de trabalho** | Nomeadas em numerais romanos (I, II, III...) por um script do KWin, que renomeia sozinho ao adicionar, remover ou reordenar áreas. |
 | **Atalhos** | Meta abre o KRunner, Alt+F1 abre o menu de aplicativos, Ctrl+Alt+T ou Meta+T abrem o Konsole, Meta+A / Meta+Shift+A alternam atividades. |
-| **Konsole "Vidro Azul"** | Esquema de cores com fundo azul-marinho, 75% de opacidade e desfoque. Definido como perfil padrão. |
+| **Konsole** | Perfil "Principal", definido como padrão: fonte JetBrains Mono com ligaduras, cores do tema Islands Dark do CLion/IntelliJ com 75% de opacidade e desfoque, margem interna, histórico de 10.000 linhas, cópia em texto puro e Ctrl+clique em caminhos de arquivo para abrir no VS Code. O esquema azul-marinho "Vidro Azul" acompanha como alternativa. |
 | **Layout dos painéis** | Dock inferior só com os aplicativos, centralizado, flutuante e com ocultação automática. Barra superior fina com menu de aplicativos, áreas de trabalho (pelo nome, sem os contornos das janelas), bandeja, relógio e mostrar área de trabalho. |
 
 ## Requisitos
@@ -20,7 +20,9 @@ Personalizações do KDE Plasma 6: tema de painéis em vidro azulado, terminal t
 - Efeito **Borrar** do KWin ativado (vem ativado por padrão)
 - Comandos `kwriteconfig6`, `qdbus6` e `plasma-apply-desktoptheme`, que já fazem parte do Plasma
 
-Nenhum pacote extra é necessário para as personalizações do KDE. A instalação dos programas (`--pacotes`) requer uma distribuição baseada no Arch (`pacman`) e pede a senha do `sudo`; em outras distribuições essa etapa é pulada com um aviso.
+O perfil do Konsole usa a fonte JetBrains Mono Nerd (pacote `ttf-jetbrains-mono-nerd`, incluído em `pacotes/arch.txt`). Sem ela, o Konsole usa a fonte monoespaçada padrão, os ícones do terminal não aparecem e o instalador avisa. As outras personalizações do KDE não precisam de pacotes extras.
+
+A instalação dos programas (`--pacotes`) requer uma distribuição baseada no Arch (`pacman`) e pede a senha do `sudo`; em outras distribuições essa etapa é pulada com um aviso.
 
 ## Instalação
 
@@ -47,7 +49,7 @@ Para instalar apenas uma parte:
 
 As opções podem ser combinadas, por exemplo `./install.sh --tema --konsole`.
 
-Depois da instalação, feche e abra o Konsole para ele carregar o novo perfil.
+Depois da instalação, abra uma janela nova do Konsole para ele carregar o novo perfil.
 
 ## Backup e como desfazer
 
@@ -158,13 +160,21 @@ Os atalhos são aplicados pelo D-Bus no serviço `kglobalaccel`, e não editando
 
 ### Konsole
 
-Em `konsole/VidroAzul.colorscheme`:
+O perfil fica em `konsole/Principal.profile`, com um comentário em cada opção:
+
+- `ColorScheme`: o esquema de cores. Troque `IslandsDark` por `VidroAzul` para usar o azul-marinho.
+- `Font`: fonte e tamanho. Durante o uso, `Ctrl++`, `Ctrl+-` e `Ctrl+0` mudam o tamanho só na janela atual.
+- `TextEditorCmdCustom`: o editor aberto pelo Ctrl+clique. `PATH`, `LINE` e `COLUMN` são trocados pelo arquivo, linha e coluna. Para o Kate, por exemplo: `kate PATH:LINE:COLUMN`.
+
+Os esquemas de cores ficam em `konsole/IslandsDark.colorscheme` e `konsole/VidroAzul.colorscheme`:
 
 - `Opacity`: de `0.0` (invisível) a `1.0` (opaco)
 - `Blur`: `true` ou `false`
 - `[Background]`: cor de fundo
 
-Depois rode `./install.sh --konsole`.
+O Islands Dark usa os valores do tema padrão do CLion/IntelliJ, tirados do repositório oficial da JetBrains (`intellij-community`). As adaptações feitas para o terminal estão explicadas em comentários no próprio arquivo.
+
+Depois rode `./install.sh --konsole`. Janelas do Konsole já abertas continuam com a configuração antiga: abra uma janela nova para ver.
 
 ### Layout dos painéis
 
@@ -181,8 +191,9 @@ Altura, ocultação e widgets de cada painel ficam em `plasma/layout/dock-e-barr
 │   ├── aparencia.conf                  # esquema de cores, ícones e efeitos do KWin
 │   └── atalhos.conf                    # atalhos globais de teclado
 ├── konsole/
-│   ├── VidroAzul.colorscheme           # cores, opacidade e desfoque do terminal
-│   └── VidroAzul.profile               # perfil que usa o esquema acima
+│   ├── Principal.profile               # perfil do terminal: fonte, histórico, cópia, cliques
+│   ├── IslandsDark.colorscheme         # cores do CLion/IntelliJ (usado pelo perfil)
+│   └── VidroAzul.colorscheme           # cores azul-marinho (alternativa)
 ├── kwin/scripts/numerais-romanos/      # script do KWin
 │   ├── metadata.json                   # nome e descrição do script
 │   └── contents/code/main.js           # nomeia as áreas de trabalho (I, II, III...)
